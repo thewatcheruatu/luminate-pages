@@ -1,4 +1,4 @@
-<h1>GW Alumni Member Home</h1>
+<h1>GW Alumni Directory</h1>
 
 <div id='member-home-content'>
 	<div id='primary-member-home-content'>
@@ -6,58 +6,23 @@
 <p><strong>Welcome, [[?x[[S1:first_name]]x::xx::GW Friend::[[S1:first_name]]]]!</strong></p>
 
 [[?[[S45:16430:IF_KNOWN]]::TRUE::
-
 <!-- User is logged in and a member of the alumni group -->
 <form name="UserDetail" action="http://connect.gwu.edu/site/Dir?sid=2&amp;view=advanced&amp;pg=srch" method="post">
 <input id="id" name="id" type="hidden" />
 <input id="cal_form" name="cal_form" type="hidden" value="UserDetail" />
 <button type='submit' class='go-to-next' name='directory'>Search Alumni Directory</button>
 </form>
+<br>
 <p><a title="search directory" href="Dir?sid=2&amp;view=basic&amp;pg=srch" class='faux-button go-to-next subordinate'>Basic Directory Search (name &amp; class year only)</a></p>
 
-::]]
-
-[[?[[S45:16622:IF_KNOWN]]::TRUE::
-
-<!-- User is logged in and a member of the career advisor network group -->
-<form name="UserDetail" action="http://connect.gwu.edu/site/Dir?sid=4&amp;view=advanced&amp;pg=srch" method="post">
-<input id="id" name="id" type="hidden" />
-<input id="cal_form" name="cal_form" type="hidden" value="UserDetail" />
-<button type='submit' id='directory' class='go-to-next' name='directory'>Search Career Advisor Network</button>
-</form>
-<p><a title="search network" href="Dir?sid=4&amp;view=basic&amp;pg=srch" class='faux-button go-to-next subordinate'>Basic Career Advisor Network Search (name &amp; class year only)</a></p>
-
 ::
 
-[[?[[S45:16622:IF_KNOWN]]::FALSE::
-<!-- User is logged in, but not a member of the alumni group -->
-<p>Only GW alumni and students are allowed to access the Alumni Directory and Career Advisor Network. </p>
-<p>If you have not already, <a title="login" href="http://alumni.gwu.edu/login">please login</a> to search the Alumni Directory and Career Advisor Network.</p>
+[[?[[S45:16430:IF_KNOWN]]::FALSE::
+<!-- User is not logged in or not a member of alumni group -->
+<p>If you have not already, <a title="login" href="https://alumni.gwu.edu/alumni-directory">please login</a> to search the Alumni Directory.</p>
 <p>If you have logged in and you believe you are seeing this message in error please contact the GW Office of Alumni Relations at 202-994-6435 or <a href="mailto:alumni@gwu.edu">alumni@gwu.edu</a>.</p>
-
-::
-
-<!-- User is not logged in -->
-<p>If you have not already, <a title="login" href="http://alumni.gwu.edu/login">please login</a> to search the Alumni Directory and Career Advisor Network.</p>
-<p>If you have logged in and you believe you are seeing this message in error please contact the GW Office of Alumni Relations at 202-994-6435 or <a href="mailto:alumni@gwu.edu">alumni@gwu.edu</a>.</p>
-
 ]]
 ]]
-
-[[?[[s45:16364:IF_KNOWN]]::TRUE::
-
-<p><strong>Thank you for being a member of the Career Advisor Network! </strong></p>
-<p>Your expertise is incredibly valuable to GW students and alumni. To update your Career Advisor Network profile visit <a title="Career Advisor Network preferences" href="DU?sid=4&amp;pg=prefs">Update Advisor Preferences</a>. If you have additional questions about the Career Advisor Network or Alumni Career Services please contact the Alumni Career Services & Professional Networks team at at <a href="mailto:alumnicareer@gwu.edu">alumnicareer@gwu.edu</a>.</p>
-
-::]]
-
-[[?[[S45:16621:IF_KNOWN]]::TRUE::
-
-<!-- Member of Group:  Directory: Alumni NOT IN Career Advisor Network -->
-<p><strong>Join the Career Advisor Network<br /></strong><br />The Career Advisor Network is an online directory of 1,500+ GW graduates dedicated to providing career strategy assistance to alumni and current GW students.&nbsp;Add or edit your information and click the "Join" button to sign up!</p>
-<convio:session name="28" param="EMBED:1629"></convio:session>
-
-::]]
 
 
 <p>&nbsp;</p>
@@ -97,45 +62,14 @@
     
 
 <ul>
-<convio:choose xmlns="http://www.convio.com">
-  <convio:when title="Member of Group: GW Alumni Association (GWAA) Board members portal access" test="eq" selected="selected">
-    <convio:op><convio:session name="45" param="18962:IF_KNOWN" ></convio:session></convio:op>
-    <convio:op>TRUE</convio:op>
-    <convio:then>
-	<li><a href="SPageServer?pagename=gwaa" title="GWAA Board materials">GW Alumni Association Board Portal</a></li>
-</convio:then>
-  </convio:when>
-  <convio:when title="Not Member of Group: GW Alumni Association (GWAA) Board members portal access" test="eq">
-    <convio:op><convio:session name="45" param="18962:IF_KNOWN" ></convio:session></convio:op>
-    <convio:op>FALSE</convio:op>
-    <convio:then></convio:then>
-  </convio:when>
-  <convio:otherwise title="Unknown"></convio:otherwise>
-</convio:choose>
-
-
 
 <convio:choose>
   <convio:when title="Member of Group:  Directory: Alumni" test="eq" selected="selected">
     <convio:op><convio:session name="45" param="16430:IF_KNOWN"></convio:session></convio:op>
     <convio:op>TRUE</convio:op>
     <convio:then>
-	<li><a title="update profile & email preferences" href="DU?pg=prof">Update Profile &amp; Email Preferences / Submit a Class Note</a></li>
+	<li><a title="update profile & email preferences" href="DU?pg=prof">Update Profile &amp; Email Preferences / Submit a Class Note</a></li><br />
 	<li><a title="update directory preferences" href="DU?sid=2&amp;pg=prefs">Update Directory Preferences</a></li>
-
-<convio:choose>
-  <convio:when title="Member of Group:  Directory: Career Advisor Network members" test="eq" selected="selected">
-    <convio:op><convio:session name="45" param="16364:IF_KNOWN"></convio:session></convio:op>
-    <convio:op>TRUE</convio:op>
-    <convio:then><li><a title="update CAN preferences" href="DU?sid=4&amp;pg=prefs">Update Career Advisor Network Preferences</a></li></convio:then>
-  </convio:when>
-  <convio:when title="Not Member of Group: Directory: Career Advisor Network members" test="eq">
-    <convio:op><convio:session name="45" param="16364:IF_KNOWN"></convio:session></convio:op>
-    <convio:op>FALSE</convio:op>
-    <convio:then></convio:then>
-  </convio:when>
-  <convio:otherwise title="Unknown"></convio:otherwise>
-</convio:choose>
 
 </convio:then>
   </convio:when>
