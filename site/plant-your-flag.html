@@ -1,0 +1,433 @@
+<!doctype html>
+<html>
+<head>
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+			integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+				crossorigin="anonymous"></script>
+	<script src='../js/gwu_wrpr/gw-utilities.js'></script>
+	<link rel='stylesheet' href='../css/gwu_wrpr/gw-default.css'>
+</head>
+<body>
+<h1>Plant Your Flag</h1>
+<div id='plant-your-flag-main'>
+	<div id='plant-your-flag-copy'>
+	<p>Tuesday, April 17, marks the fourth annual GW Flag Day, a campus-wide effort to educate students, faculty, and staff about the ways in which philanthropy enriches the GW experience.</p>
+
+	<p>George Washington's Commander-in-Chief flag will be prominently displayed around campus to help identify the people and places supported by philanthropy.</p>
+
+</div>
+
+	<div id='gw-flag-day-video-embed' class='youtube-embed'>
+		<div class='youtube-embed-sizer aspect-ratio-16-9'>
+			<!--iframe id='flag-day-video-iframe' src="https://www.youtube.com/embed/u7WL6Le-peE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe-->
+			<iframe id='flag-day-video-iframe' src="https://www.youtube.com/embed/u7WL6Le-peE?enablejsapi=1" frameborder="0"></iframe>
+		</div>
+	</div>
+</div>
+	
+<p class='students-choose'>GW students: <a class='students-choose-survey-link' href='http://connect.gwu.edu/site/Survey?ACTION_REQUIRED=URI_ACTION_USER_REQUESTS&SURVEY_ID=16808'>Choose where to plant your flag</a> and you'll be entered to win!</p>
+
+<div id="map"></div>
+
+<p class='students-choose'>GW students: <a class='students-choose-survey-link' href='http://connect.gwu.edu/site/Survey?ACTION_REQUIRED=URI_ACTION_USER_REQUESTS&SURVEY_ID=16808'>Choose where to plant your flag</a> and you'll be entered to win!</p>
+
+<style class='custom-style'>
+#plant-your-flag-main {
+	margin-bottom : 1.5em;
+}
+
+.students-choose {
+	border-bottom : .2em solid #7ac143;
+	border-top : .2em solid #7ac143;
+	font-size : 1.2em;
+	padding : .75em 1em;
+	text-align : center;
+}
+
+@media only screen and ( min-width : 50em ) {
+	#plant-your-flag-main {
+		display : flex;
+		flex-wrap : wrap;
+	}
+
+	#plant-your-flag-main > div {
+		transition : flex-basis .3s ease-in-out;
+	}
+
+	#plant-your-flag-main #plant-your-flag-copy {
+		flex-basis : 66%;
+	}
+
+	#plant-your-flag-main #gw-flag-day-video-embed {
+		flex-basis : 33%;
+	}
+
+	#plant-your-flag-main.active-video #plant-your-flag-copy {
+		flex-basis : 50%;
+	}
+
+	#plant-your-flag-main.active-video #gw-flag-day-video-embed {
+		flex-basis : 50%;
+	}
+}
+
+.youtube-embed-sizer {
+	height : 0;
+	position : relative;
+}
+
+.aspect-ratio-16-9.youtube-embed-sizer {
+	padding-bottom : 56.25%;
+}
+
+.youtube-embed iframe {
+	height : 100%;
+	left : 0;
+	position : absolute;
+	top : 0;
+	width : 100%;
+}
+
+#gw-flag-day-video-embed {
+	/* max-width : 560px; */
+}
+</style>
+
+<script>
+( function( $ ) {
+	$( function() {
+		$( '#flag-day-video-iframe' ).on( 'click', function( e ) {
+			$( '#plant-your-flag-main' ).addClass( 'active-video' );
+		} );
+
+		GWUtilities.loadClass( 'GWModals' )
+			.then( function() {
+				GWModals.init( { jQuery : $ } );
+				GWModals
+					.createFromDiv( 'plant-your-flag-survey' );
+
+				$( '.students-choose-survey-link' ).on( 'click', function( e ) {
+					e.preventDefault();
+					GWModals.show( 'plant-your-flag-survey' );
+				} );
+			} )
+			.catch( function( error ) {
+				console.log( 'Error attempting to load modal script', error.message );
+			} );
+	} );
+
+} )( jQuery );
+</script>
+
+<script>
+
+// 2. This code loads the IFrame Player API code asynchronously.
+	var tag = document.createElement('script');
+
+	tag.src = "https://www.youtube.com/iframe_api";
+	var firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+	// 3. This function creates an <iframe> (and YouTube player)
+	//    after the API code downloads.
+	var player;
+	function onYouTubeIframeAPIReady() {
+		player = new YT.Player( 'flag-day-video-iframe', {
+			events: {
+				'onReady': onPlayerReady,
+				'onStateChange': onPlayerStateChange
+			}
+		});
+
+	}
+
+	// 4. The API will call this function when the video player is ready.
+	function onPlayerReady(event) {
+		//event.target.playVideo();
+	}
+
+	// 5. The API calls this function when the player's state changes.
+	//    The function indicates that when playing a video (state=1),
+	//    the player should play for six seconds and then stop.
+	function onPlayerStateChange(event) {
+		var plantMain = document.getElementById( 'plant-your-flag-main' );
+		if ( event.data == YT.PlayerState.PLAYING || 
+			event.data == YT.PlayerState.BUFFERING ) {
+			plantMain.classList.add( 'active-video' );
+		} else {
+			plantMain.classList.remove( 'active-video' );
+		}
+	}
+
+</script>
+
+<style class='custom-style'>
+	/* Always set the map height explicitly to define the size of the div
+	 * element that contains the map. */
+	#map {
+		/* height: 100%; */
+		padding-bottom : 56.25%;
+	}
+
+	.flag-location-info-container h2,
+	.flag-location-info-container h3 {
+		margin : 0;
+	}
+
+	.flag-location-info-container h2 {
+		border-top : 0;
+		padding-top : 0;
+	}
+
+	.num-flags {
+		color : #7ac143;
+	}
+</style>
+
+<script>
+	var map;
+	var markers = [];
+	var pageVariant = document.location.search.indexOf( 'variant=A' ) > 0 ? 'A' :
+		( document.location.search.indexOf( 'variant=B' ) > 0 ? 'B' : '' );
+
+	function initMap() {
+		map = new google.maps.Map( document.getElementById( 'map' ), {
+			zoom: 17,
+			center: { lat : 38.898356, lng : -77.046646 }
+		} );
+
+		dropMarkers();
+
+		if ( typeof jQuery !== 'undefined' ) {
+			jQuery( window ).on( 'resize', onPageResize );
+		}
+
+		map.addListener( 'zoom_changed', onMapZoomChanged );
+	}
+
+	var flags = [
+		{
+			placeName : 'Columbian College of Arts & Sciences',
+			position : { lat : 38.899858, lng : -77.048313 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'Elliott School of International Affairs',
+			position : { lat : 38.896254, lng : -77.044489 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'GW School of Business',
+			position : { lat : 38.898883, lng : -77.049196 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'Student Life at GW',
+			position : { lat : 38.900124, lng : -77.046828 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'Milken Institute School of Public Health',
+			position : { lat : 38.902279, lng : -77.051076 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'Science & Engineering Hall',
+			position : { lat : 38.900206, lng : -77.049291 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'Division of Athletics',
+			position : { lat : 38.897922, lng : -77.049341 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'Power & Promise for Student Aid',
+			position : { lat : 38.899458, lng : -77.045830 }, 
+			numFlags : 0,
+		},
+		{
+			placeName : 'School of Nursing',
+			position : { lat : 39.058581, lng : -77.443909 }, 
+			numFlags : 0,
+		},
+	];
+
+	function addMarkerWithTimeout( flag, timeout ) {
+		window.setTimeout( function() {
+			var marker = createMarker( flag );
+			markers.push( marker );
+			/*
+			window.setTimeout( function() {
+				google.maps.event.trigger( marker, 'click' );
+			}, timeout + 1000 );
+			*/
+			rescaleMarkers();
+		}, timeout );
+	}
+
+	function bounceMarker( marker ) {
+		marker.setAnimation( google.maps.Animation.BOUNCE );
+		setTimeout( function() {
+			marker.setAnimation( null );
+		}, 1000 );
+	}
+
+	function clearMarkers() {
+		for ( var i = 0; i < markers.length; i++ ) {
+			markers[i].setMap( null );
+		}
+		markers = [];
+	}
+
+	function createMarker( flag ) {
+		var infoWindow = new google.maps.InfoWindow( {
+			content : makeInfoWindowString( flag )
+		} );
+
+		var marker = new google.maps.Marker( {
+			position : flag.position,
+			map : map,
+			animation : google.maps.Animation.DROP,
+			icon : {
+				url : 'https://secure2.convio.net/gwu/images/special-pages/flag-day/battle-flag-100x86.png',
+				size : new google.maps.Size( 100, 86 ),
+			},
+		} );
+		marker.infoWindowOpen = false;
+
+		marker.addListener( 'click', function() {
+			bounceMarker( marker );
+			if ( marker.infoWindowOpen ) {
+				marker.infoWindowOpen = false;
+				infoWindow.close();
+			} else {
+				marker.infoWindowOpen = true;
+				infoWindow.open( map, marker );
+			}
+		} );
+
+		return marker;
+	}
+
+	function dropMarkers() {
+		clearMarkers();
+		for ( var i = 0; i < flags.length; i++ ) {
+			addMarkerWithTimeout( flags[i], 500 + i * 200 );
+		}
+	}
+
+	function makeInfoWindowString( flag ) {
+		var contentString;
+		if ( pageVariant === 'A' ) {
+			contentString = '<div class="flag-location-info-container">' +
+				'<h3 class="flags-planted">Flags: ' + flag.numFlags + '</h3>' +
+				'</div>';
+		} else {
+			contentString = '<div class="flag-location-info-container">' +
+				'<h2>' + flag.placeName + '</h2>' + 
+				'<h3 class="flags-planted">Flags: <span class="num-flags">' + 
+				flag.numFlags + '</span></h3>' +
+				'</div>';
+		}
+
+		return contentString;
+	}
+
+	function onMapZoomChanged() {
+		rescaleMarkers();
+	}
+
+	function onPageResize() {
+		var currentWidth = jQuery( '#map' ).parent().width();
+
+		if ( currentWidth < 500 ) {
+			map.setZoom( 15 );
+		} else if ( currentWidth < 1200 ) {
+			map.setZoom( 16 );
+		} else {
+			map.setZoom( 17 );
+		}
+	}
+
+	function rescaleMarkers( zoom ) {
+		var markerHeightMax = 86;
+		var markerHeightMin = 26;
+		var markerWidthMax = 100;
+		var markerWidthMin = 30;
+		var zoom = zoom || map.getZoom();
+		var zoomMax = 20;
+		var zoomMin = 15;
+
+		// Computed
+		zoom = Math.max( zoomMin, Math.min( zoomMax, zoom ) );
+		var resizePercent = ( zoom - zoomMin ) / ( zoomMax - zoomMin ) 
+		var markerHeight = Math.round( markerHeightMin + 
+			( markerHeightMax - markerHeightMin ) * resizePercent );
+		var markerWidth = Math.round( markerWidthMin + 
+			( markerWidthMax - markerWidthMin ) * resizePercent );
+		var iconSize = new google.maps.Size( markerWidth, markerHeight );
+		var anchorPosition = new google.maps.Point(
+			Math.round( markerWidth / 2 ),
+			Math.round( markerHeight / 2 )
+		);
+		for ( var i = 0; i < markers.length; i++ ) {
+			markers[i].icon.scaledSize = iconSize;
+			markers[i].icon.anchor = anchorPosition;
+		}
+	}
+
+	function setMarkers(map) {
+		// Adds markers to the map.
+
+		// Marker sizes are expressed as a Size of X,Y where the origin of the image
+		// (0,0) is located in the top left of the image.
+
+		// Origins, anchor positions and coordinates of the marker increase in the X
+		// direction to the right and in the Y direction down.
+		var image = {
+			url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+			// This marker is 20 pixels wide by 32 pixels high.
+			size: new google.maps.Size(20, 32),
+			// The origin for this image is (0, 0).
+			origin: new google.maps.Point(0, 0),
+			// The anchor for this image is the base of the flagpole at (0, 32).
+			anchor: new google.maps.Point(0, 32)
+		};
+		// Shapes define the clickable region of the icon. The type defines an HTML
+		// <area> element 'poly' which traces out a polygon as a series of X,Y points.
+		// The final coordinate closes the poly by connecting to the first coordinate.
+		var shape = {
+			coords: [1, 1, 1, 20, 18, 20, 18, 1],
+			type: 'poly'
+		};
+		for (var i = 0; i < flags.length; i++) {
+			var flag = flags[i];
+			var marker = new google.maps.Marker({
+				position: {lat: flag[1], lng: flag[2]},
+				map: map,
+				icon: image,
+				shape: shape,
+				title: flag[0],
+				zIndex: flag[3]
+			});
+		}
+	}
+
+	function toggleBounce( marker ) {
+		if ( marker.getAnimation() !== null ) {
+			marker.setAnimation( null );
+		} else {
+			marker.setAnimation( google.maps.Animation.BOUNCE );
+		}
+	}
+</script>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByfuzffxTzCEbuRzJpN6Yh9gTYvT3Jte0&callback=initMap">
+</script>
+
+
+<div id='plant-your-flag-survey' class='hidden'>[[S28:EMBED:16808]]</div>
+</body>
+</html>
