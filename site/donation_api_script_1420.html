@@ -552,27 +552,53 @@
 
 <script>
 /* Adding some API form specific stuff here - jgb, 4/17/14 */
-(function($) {
-	$(document).ready(function() {
-		if (window.gwUtilities) {
-			if (gwUtilities.queryString.get('student_org')) {
-				assignStudentOrg();
-			}
-		}
-$('body').addClass('making-history').removeClass('logo-full');
-	});
+( function( $ ) {
+	$( document ).ready( function() {
+		processQueryString();
+		$( 'body' ).addClass( 'making-history' ).removeClass( 'logo-full' );
+	} );
 	
 	function assignStudentOrg() {
-		if (!$('#designeeText_1006').length) {
-			setTimeout(function() {
+		if ( !$( '#designeeText_1006' ).length ) {
+			setTimeout( function() {
 				assignStudentOrg();
-			}, 300);
+			}, 300 );
 			return;
 		}
-		var studentOrg = gwUtilities.queryString.get('student_org');
-		$('#designationType_1006').prop('checked', true);
-		$('#designeeText_1006').val(studentOrg);
+		var studentOrg = gwUtilities.queryString.get( 'student_org' );
+		$( '#designationType_1006' ).prop( 'checked', true );
+		$( '#designeeText_1006' ).val( studentOrg );
 	}
-}) (jQuery);
+
+	function executeWhenDonationLevelsReady( cb ) {
+		if ( ! $( '#giftAmounts' ).find( '.opt-radio' ).length ) {
+			setTimeout( function() {
+				executeWhenDonationLevelsReady( cb );
+			}, 300 );
+			return;
+		}
+
+		cb();
+	}
+
+	function processQueryString() {
+		if ( ! window.gwUtilities ) {
+			console.log( 'gwUtilities required for query string parsing.' );
+			return;
+		}
+		var getParam = gwUtilities.queryString.get;
+		if ( getParam( 'student_org' ) ) {
+			assignStudentOrg();
+		}
+
+		if ( getParam( 'hdlo' ) ) {
+			executeWhenDonationLevelsReady( function() {
+				$( '#level_1846' ).parent().addClass( 'hidden' ); // Hide $50
+				$( '#level_1843' ).parent().addClass( 'hidden' ); // Hide $100
+			} );
+		}
+	}
+
+} ) ( jQuery );
 </script>
 ]]
