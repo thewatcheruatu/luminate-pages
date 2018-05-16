@@ -1,0 +1,578 @@
+[[?x3301x1017x::x[[S4]]x::
+<div style="text-align:center;">
+<h1>donation_api_script_1420</h1>
+<p>Content preview disabled for Admin UI</p>
+</div>
+::
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../js/gwu_wrpr/libs/jquery-1.10.2.min.js"><\/script>')</script>
+<script src="../js/gwu_wrpr/jquery-plugins/jquery.hotkeys.js"></script>
+<script src="../js/luminateExtend.js"></script>
+<script src="../jquery/plugins/validate/jquery.validate.min.js"></script>
+<!-- API Script -->
+<script type="text/javascript">
+(function($) {
+  $(function() {
+
+	luminateExtend({
+		apiKey: '[[S0:CONVIO_API_KEY]]', 
+		path: {
+			nonsecure: 'http://[[S29:DOMAIN]][[S29:PATH]]', 
+			secure: 'https://[[S29:SECURE_DOMAIN]][[S29:SECURE_PATH]]'
+		}
+	});
+  
+	window.donationFormId = 1420;
+
+	/* dynamically load donation form information */
+	luminateExtend.api({
+		api: 'donation', 
+		data: 'method=getDonationFormInfo&form_id='+window.donationFormId, 
+		callback: {
+			error: function(data) {
+				console.log(data.errorResponse);
+			},
+			success: function(data) {
+				var donationLevels = luminateExtend.utils.ensureArray(data.getDonationFormInfoResponse.donationLevels.donationLevel);
+				/* append each donation level to the #giftAmounts element */
+				$.each(donationLevels, function() {
+					if (this.userSpecified == 'true') {
+					/* the user-specified-amount is special - assume only one */
+						$('#giftAmounts').append(
+							'<div class="opt-radio" id="otherRadio">'+
+								'<input id="level_other" class="radio" name="level_id" type="radio" value="'+this.level_id+'" />'+
+								'&nbsp;<label class="choice fs13" for="level_other">'+this.name+'</label>'+
+								'&nbsp;<input id="other_amount" class="text" name="other_amount" type="text" />'+
+							'</div>'
+						);
+					} else {
+						$('#giftAmounts').append(
+							'<div class="opt-radio">'+
+								'<input id="level_'+this.level_id+'" class="radio" name="level_id" type="radio" value="'+this.level_id+'" amt="'+this.amount.decimal+'" />'+
+								'&nbsp;<label class="choice fs13" for="level_'+this.level_id+'">'+this.name+'</label>'+
+							'</div>'                
+						);
+					}
+				});
+				/* add onclick handler for donation level radio buttons */
+				$('input[name="level_id"]').on('click', function() {
+					if($(this).is('#level_other')) {
+						$('#other_amount').removeAttr('disabled');
+						$('#other_amount').attr('name', 'other_amount');
+						$('#other_amount').focus();
+					} else {
+						$('#other_amount').attr('disabled', 'disabled');
+						$('#other_amount').removeAttr('name');
+					}
+					updateTotalGiftAmt();
+				});
+				$('#other_amount').on('change', function() { updateTotalGiftAmt(); });
+				/* preselect first donation level */
+				$('input[name="level_id"]:first').click();
+				updateTotalGiftAmt();
+				/* make sure form_id is populated properly on the form */
+				$('input[name="form_id"]').val(window.donationFormId);
+			}
+		}
+    });
+
+	/* dynamically load designation type and designee information */
+	luminateExtend.api({
+		api: 'donation', 
+		data: 'method=getDesignationTypes&form_id='+window.donationFormId, 
+		callback: {
+			error: function(data) {
+				console.log(data.errorResponse);
+			},
+			success: function(data) {
+				var designationTypes = luminateExtend.utils.ensureArray(data.getDesignationTypesResponse.type);
+				/* sort designation types by sortOrder */
+				designationTypes.sort(function(a,b){return parseInt(a.sortOrder) - parseInt(b.sortOrder);});
+				/* add "write-in" option to end */
+				var writeInDesignee = {
+					'sortOrder':designationTypes.length,
+					'name':'Other',
+					'id':'other',
+					'inputType':'text'
+				};
+				designationTypes.push(writeInDesignee);
+				/* iterate through designation types to add them to #designation element */
+				$.each(designationTypes, function() {
+					/* create user-friendly labels for each designation type */
+					if (this.name.match(/Power/)) {
+						this.label = this.name + ' (please specify school or general university fund):';
+						this.inputType = 'select';
+					} else if (this.name.match(/Schools/)) {
+						this.label = this.name + ' (please specify school):';
+						this.inputType = 'select';
+					} else if (this.name.match(/Priorities/)) {
+						this.label = this.name + ':';
+						this.inputType = 'select';
+					} else if (this.name.match(/Athletics/)) {
+						this.label = this.name + ' Buff &amp; Blue Fund (please specify general fund, project or team):';
+						this.inputType = 'select';
+					} else if (this.name.match(/President/)) {
+						this.label = this.name + ' (unrestricted)';
+						this.inputType = 'radio';
+					} else if (this.name.match(/Student/)) {
+						this.label = this.name + ' (please specify organization):';
+						this.inputType = 'text';
+					} else if (this.name.match(/Other/)) {
+						this.label = this.name + ' (if designation is not listed, please specify):';
+						this.inputType = 'text';
+					} else {
+						this.label = this.name + ':';
+						this.inputType = 'select';
+					}
+					/* create designation type radio buttons */
+					var dTypeText = '<div class="purpose-'+this.inputType+'">'+
+						'<input type="radio" id="designationType_'+this.id+'" value="'+this.id+'" name="Designation" dType="'+this.inputType+'" ';
+					if (this.name.match(/President/)) dTypeText += 'checked="checked" ';
+					dTypeText += '/>&nbsp;<label for="designationType_'+this.id+'">'+this.label+'</label>';
+					switch(this.inputType) {
+						case 'select': dTypeText += '<br /><select id="designeeSelect_'+this.id+'" name="'+this.name+'" class="designeeSelect"><option value=""></option></select>'; break;
+						case 'text': dTypeText += '<br /><input id="designeeText_'+this.id+'" type="text" maxlength="40" size="32" name="'+this.name+'" class="designeeText" />';
+						case 'radio': dTypeText += '<input type="hidden" name="designeeHidden_'+this.id+'" class="designeeHidden" value="" />'; break;
+						default: console.log('Error, unexpected inputType: '+this.inputType);
+					}
+					dTypeText += '</div>';
+					$('#designation').append(dTypeText);
+				});
+				
+				/* select the appropriate radio button when selects are changed */
+				$('input[name="Designation"] ~ select.designeeSelect').on('change', function() {
+					if (!$('#'+this.id.replace('designeeSelect','designationType')).is(':checked')) {
+						$('#'+this.id.replace('designeeSelect','designationType')).click();
+						$(this).focus();
+					}
+				});
+
+				/* select the appropriate radio button when input gains focus */
+				$('input[name="Designation"] ~ input.designeeText').on('focus', function() {
+					if (!$('#'+this.id.replace('designeeText','designationType')).is(':checked')) {
+						$('#'+this.id.replace('designeeText','designationType')).click();
+						$(this).focus();
+					}
+				});
+
+				/* retrieve designees and populate designation type dropdowns */
+				luminateExtend.api({
+					api: 'donation', 
+					data: 'method=getDesignees&form_id='+window.donationFormId, 
+					callback: {
+						error: function(data) {
+							console.log(data.errorResponse);
+						},
+						success: function(data) {
+							var designees = luminateExtend.utils.ensureArray(data.getDesigneesResponse.designee);
+							/* sort designees alphabetically within each type */
+							designees.sort(function(a,b){
+								var aName = a.name.toLowerCase();
+								var bName = b.name.toLowerCase();
+								if (a.typeId != b.typeId) return parseInt(a.typeId) - parseInt(b.typeId);
+								else if (aName < bName) return -1;
+								else if (aName > bName) return 1;
+								else return 0;
+							});
+							/* if designation type has select, add option to it, otherwise set hidden input value to designee id */
+							$.each(designees, function() {
+								var currentType = this.typeId;
+								if ($('select#designeeSelect_'+currentType).length > 0) {
+									$('select#designeeSelect_'+currentType).append('<option value="'+this.id+'">'+this.name+'</option>');
+								} else if ($('input[name=designeeHidden_'+currentType+']').length > 0) {
+									$('input[name=designeeHidden_'+currentType+']').val(this.id);
+								}
+							});
+						}
+					}
+				});
+			}
+		}
+	});
+    
+    /* validation - BDC */
+    $('.donation-form').validate({
+		submitHandler: function(form) {
+			$('#other_amount').val($('#other_amount').val().replace(/[$,]/g, ''));
+			if($('#level_other').is(':checked') && !$('#other_amount').val()) {
+				$('#other_amount').after('<label for="other_amount" generated="true" class="error">This field is required.</label>');
+				$('#other_amount').focus();
+			} else {
+				var currDesType = $('input[name="Designation"]:checked');
+				var currDonLevel = $('input[name="level_id"]:checked');
+				var currDesignee = null;
+				var currDonAmt = 0;
+				var destDesigneeAmt = document.getElementById('designatedAmt');
+				var destDesigneeId = document.getElementById('designatedId');
+				var validDesignee = false;
+				if (currDesType.length > 0 && currDonLevel.length > 0 && destDesigneeAmt && destDesigneeId) {
+					if (currDonLevel.is('#level_other')) currDonAmt = parseFloat($('#other_amount').val());
+					else currDonAmt = parseInt(currDonLevel.attr('amt'));
+					switch(currDesType.attr('dType')) {
+						case 'select': {
+							currDesignee = $('input[name="Designation"]:checked ~ select.designeeSelect').val();
+							if (currDesignee) {
+								destDesigneeAmt.name = 'designated.1.amount';
+								destDesigneeAmt.value = currDonAmt.toString();
+								destDesigneeId.name = 'designated.1.id';
+								destDesigneeId.value = currDesignee.toString();
+								validDesignee = true;
+							} else {
+								window.scrollTo(0,810);
+								alert("You have selected a designation type, but have not selected a designee in the associated dropdown list.  Please select a designee from the dropdown list or choose the President's Fund for Excellence option to specify an unrestricted gift.");
+								console.log('Selected designation type '+currDesType.val()+' has no selected designee');
+							}
+							break; }
+						case 'radio': {
+							currDesignee = $('input[name="Designation"]:checked ~ input.designeeHidden').val();
+							if (currDesignee) {
+								destDesigneeAmt.name = 'designated.1.amount';
+								destDesigneeAmt.value = currDonAmt.toString();
+								destDesigneeId.name = 'designated.1.id';
+								destDesigneeId.value = currDesignee.toString();
+								validDesignee = true;
+							} else {
+								console.log('Selected designation type '+currDesType.val()+' has no hidden designee value');
+							}
+							break; }
+						case 'text': {
+							currDesignee = $('input[name="Designation"]:checked ~ input.designeeText').val();
+							if (currDesignee) {
+								destDesigneeAmt.name = 'designated_write_in.1.amount';
+								destDesigneeAmt.value = currDonAmt.toString();
+								destDesigneeId.name = 'designated_write_in.1.name';
+								destDesigneeId.value = currDesignee.toString();
+								validDesignee = true;
+							} else {
+								window.scrollTo(0,810);
+								alert("You have selected a designation type, but have not specified the designee's information in the associated text entry box.  Please enter more details in the designee text entry box or choose the President's Fund for Excellence option to specify an unrestricted gift.");
+								console.log('Selected designation type '+currDesType.val()+' has no designee details');
+							}
+							break; }
+						default: console.log('unknown dType attr for currDesType');  break;
+					}
+				} else {
+					console.log('no designee info');
+				}
+				if (validDesignee) changePage(2);
+			}
+		},
+		invalidHandler: function(form) {
+			if($('#level_other').is(':checked') && !$('#other_amount').val()) {
+				$('#other_amount').after('<label for="other_amount" generated="true" class="error" style="">This field is required.</label>');
+				$('#other_amount').focus();
+			}
+			console.log('Error detected during validation!!');
+		}
+	});
+
+    $('#billing_name_first').rules('add', { required: true });
+    $('#billing_name_last').rules('add', { required: true });
+    $('#billing_address_street1').rules('add', { required: true });
+    $('#billing_address_city').rules('add', { required: true });
+    $('#billing_address_state').rules('add', { required: true });
+    $('#billing_address_zip').rules('add', { required: true });
+    $('#donor_email').rules('add', { required: true, email: true });
+    $('#card_number').rules('add', { required: true });
+    $('#card_cvv').rules('add', { required: true });
+    $('#card_exp_date_month').rules('add', { required: true });
+    $('#card_exp_date_year').rules('add', { required: true });
+	
+	$('#matching_eligible').on('click', function() {
+		if (this.checked) $('#employerInfo').removeClass('hidden-form');
+		else $('#employerInfo').addClass('hidden-form');
+	});
+	
+	window.changePage = function(pageNum) {
+		if (pageNum == 1) {
+			/*
+			 * If realDonate flagged the form as submitted, unflag it 
+			 * (i.e., user tried to submit a form with errors
+			 */
+			$( 'form' ).removeClass( 'submitted' );
+
+			// switch from page 2 back to page 1, no field changes needed
+			$('#donate_form_page2').addClass('hidden-form');
+			$('#progress_bar_step2').removeClass('progress-bar-step-current');
+			$('#donate_form_page1').removeClass('hidden-form');
+			$('#progress_bar_step1').addClass('progress-bar-step-current');
+		} else {
+			// fill in fields on the second page with values from the first
+			$('#transaction-date-summary-row span.entry-value').html(luminateExtend.utils.simpleDateFormat(new Date(), 'MMMM d, yyyy'));
+			if ($('input[name="Designation"]:checked').length > 0) {
+				var designeeLabel = '';
+				switch($('input[name="Designation"]:checked').attr('dtype')) {
+					case 'select':	{
+						designeeLabel = $('input[name="Designation"]:checked ~ select.designeeSelect option:selected').html();
+						break;	}
+					case 'radio':	{
+						designeeLabel = $('input[name="Designation"]:checked ~ label').html().split(' (')[0];
+						break;	}
+					case 'text':	{
+						designeeLabel = $('input[name="Designation"]:checked ~ input.designeeText').val();
+						break;	}
+					default:	break;
+				}
+				if (designeeLabel.length > 0) {
+					$('#designation-summary-row span.entry-value').html(designeeLabel);
+					$('#designation-summary-row').show();
+				} else {
+					$('#designation-summary-row').hide();
+				}
+			} else {
+				$('#designation-summary-row').hide();
+			}
+			$('#donation-level-summary-row span.entry-value').html($('input[name="level_id"]:checked ~ label').html());
+			if ($('input[name="level_id"]:checked').is('#level_other')) {
+				$('#donation-amount-summary-row span.entry-value').html($('#other_amount').val());
+			} else {
+				$('#donation-amount-summary-row span.entry-value').html('$'+$('input[name="level_id"]:checked').attr('amt'));
+			}
+			if ($(document.getElementById('sustaining.frequency')).val().length > 0) {
+				$('#donation-frequency-summary-row span.entry-value').html($(document.getElementById('sustaining.frequency')).val().replace(/^(.)|\s(.)/g, function($1){ return $1.toUpperCase( ); }));
+				if ($(document.getElementById('sustaining.duration')).val() == '0') {
+					$('#donation-duration-summary-row span.entry-value').html('Ongoing');
+				} else {
+					$('#donation-duration-summary-row span.entry-value').html($(document.getElementById('sustaining.duration')).val());
+				}
+				$('#donation-frequency-summary-row').show();
+				$('#donation-duration-summary-row').show();
+			} else {
+				$('#donation-frequency-summary-row').hide();
+				$('#donation-duration-summary-row').hide();
+			}
+			var cNum = '';
+			for (j=0; j<($('#card_number').val().length - 4); j++) cNum += 'X';
+			cNum += $('#card_number').val().slice(-4);
+			$('#card-number-summary-row span.entry-value').html(cNum);
+			$('#donor-name-summary-row span.entry-value').html($('#billing_name_first').val() + ' ' + $('#billing_name_middle').val() + ' ' + $('#billing_name_last').val());
+			$('#donor-address-street-summary-row span.entry-value').html($('#billing_address_street1').val());
+			if ($('#billing_address_street2').val().length > 0) $('#donor-address-street-summary-row span.entry-value').append('<br />'+$('#billing_address_street2').val());
+			$('#donor-address-city-summary-row span.entry-value').html($('#billing_address_city').val());
+			$('#donor-address-state-summary-row span.entry-value').html($('#billing_address_state option:selected').html());
+			$('#donor-address-zip-summary-row span.entry-value').html($('#billing_address_zip').val());
+			$('#donor-address-country-summary-row span.entry-value').html($('#billing_address_country').val());
+			$('#donor-email-summary-row span.entry-value').html($('#donor_email').val());
+			if ($('#email_opt_in').is(':checked')) $('#donor-email-optin-summary-row span.entry-value').html('Yes');
+			else $('#donor-email-optin-summary-row span.entry-value').html('No');
+			$('#donor-phone-summary-row span.entry-value').html($('#donor_phone').val());
+			$('#donor-affiliation-summary-row span.entry-value').html('');
+			if ($('#affiliation input[name="is_alumnus"]').is(':checked')) $('#donor-affiliation-summary-row span.entry-value').append('GW Alumnus/a <br />');
+			if ($('#affiliation input[name="is_parent"]').is(':checked')) $('#donor-affiliation-summary-row span.entry-value').append('GW Parent <br />');
+			if ($('#affiliation input[name="is_student"]').is(':checked')) $('#donor-affiliation-summary-row span.entry-value').append('GW Student <br />');
+			if ($('#affiliation input[name="is_facultystaff"]').is(':checked')) $('#donor-affiliation-summary-row span.entry-value').append('GW Faculty/Staff member <br />');
+			if ($('#affiliation input[name="is_friend"]').is(':checked')) $('#donor-affiliation-summary-row span.entry-value').append('GW Friend');
+			$('#comments-summary-row span.entry-value').html($('#comments').val());
+			if ($('#matching_eligible').is(':checked')) {
+				$('#spouse-name-summary-row span.entry-value').html($('#spouse_name').val());
+				$('#employer-name-summary-row span.entry-value').html($('#employer_name').val());
+				$('#employer-address-street-summary-row span.entry-value').html($('#employer_address_street1').val());
+				if ($('#employer_address_street2').val().length > 0) $('#employer-address-street-summary-row span.entry-value').append('<br />' + $('#employer_address_street2').val());
+				$('#employer-address-city-summary-row span.entry-value').html($('#employer_address_city').val());
+				$('#employer-address-state-summary-row span.entry-value').html($('#employer_address_state option:checked').html());
+				$('#employer-address-zip-summary-row span.entry-value').html($('#employer_address_zip').val());
+				$('#employer-address-country-summary-row span.entry-value').html($('#employer_address_country').val());
+				$('#matching-gift-summary').show();
+			} else {
+				$('#matching-gift-summary').hide();
+			}
+			$('#donate_form_page1').addClass('hidden-form');
+			$('#progress_bar_step1').removeClass('progress-bar-step-current');
+			$('#donate_form_page2').removeClass('hidden-form');
+			$('#progress_bar_step2').addClass('progress-bar-step-current');
+		}
+		window.scrollTo(0,0);
+	};
+	
+	window.realDonate = function() {
+		if ( $( 'form' ).hasClass( 'submitted' ) ) {
+			return;
+		}
+		$( 'form' ).addClass( 'submitted' );
+
+		luminateExtend.api({
+			api: 'donation',
+			form: 'form.donation-form.luminateApi',
+			requestType: 'POST',
+			callback: {
+				error: function(data) {
+					$('#donation-errors').remove();
+					$('.donation-form').prepend('<div id="donation-errors">' + 
+											'<div class="alert alert-error">' + 
+												data.errorResponse.message + 
+											'</div>' + '</div>');
+					$('.donation-loading').remove();
+					$('.donation-form').show();
+					changePage(1);
+					console.log(data);
+				}, 
+				success: function(data) {
+					$('#donation-errors').remove();
+					if(data.donationResponse.errors) {
+						$('.donation-form').prepend('<div id="donation-errors">' + 
+							((data.donationResponse.errors.message) ? ('<div class="alert alert-error">' + 
+								data.donationResponse.errors.message + '</div>') : '') + 
+											'</div>');
+						if(data.donationResponse.errors.fieldError) {
+							var fieldErrors = luminateExtend.utils.ensureArray(data.donationResponse.errors.fieldError);
+							$.each(fieldErrors, function() {
+								$('#donation-errors').append('<div class="alert alert-error">' + 
+												 this + '</div>');
+							});
+						}
+						$('.donation-loading').remove();
+						$('.donation-form').show();
+						changePage(1);
+					} else {
+						window.location.href='[[S11:19:page]][[?[[S11:19:page]]::?::&::?]]pagename=[[S334:pagename]]_thanks';
+					}
+				}
+			}
+		});
+	};
+
+	window.durationChange = function(that) {
+		var fDiv = document.getElementById('frequencyDiv'),
+			dcDiv = document.getElementById('durationCountDiv'),
+			susFreq = document.getElementById('sustaining.frequency'),
+			susDur = document.getElementById('sustaining.duration'),
+			giftFreq = document.getElementById('giftFrequency'),
+			giftFreqCount = document.getElementById('giftFrequencyCount');
+		if (fDiv && dcDiv && susFreq && susDur && giftFreq && giftFreqCount) {
+			switch($(that).val()) {
+				case "1": {
+					$(fDiv).addClass('hidden-form');
+					$(dcDiv).addClass('hidden-form');
+					$(susFreq).val('');
+					$(susDur).val('');
+					break;	}
+				case "2": {
+					$(fDiv).removeClass('hidden-form');
+					$(dcDiv).addClass('hidden-form');
+					$(susFreq).val($(giftFreq).val());
+					$(susDur).val('0');
+					break;	}
+				case "3": {
+					$(fDiv).removeClass('hidden-form');
+					$(dcDiv).removeClass('hidden-form');
+					$(susFreq).val($(giftFreq).val());
+					$(susDur).val($(giftFreqCount).val());
+					break;	}
+				default: console.log('Error switching gift duration!');  break;
+			}
+			updateTotalGiftAmt();
+		} else {
+			console.log('Error finding gift duration ids!');
+		}
+	};
+	
+	window.frequencyChange = function(that) {
+		var susFreq = document.getElementById('sustaining.frequency');
+		var susDur = document.getElementById('sustaining.duration');
+		var cLabel = document.getElementById('countlabel');
+		var options = $('#giftFrequencyCount option');
+		var max = 24;
+		if ($(that).length > 0 && cLabel && susFreq && options) {
+			switch($(that).val()) {
+				case 'monthly': {
+					max = 24;
+					$(cLabel).html('Months');
+					break;	}
+				case 'quarterly': {
+					max = 12;
+					$(cLabel).html('Quarters');
+					break;	}
+				case 'annually': {
+					max = 10;
+					$(cLabel).html('Years');
+					break;	}
+				default: console.log('Error switching frequency!'); break;
+			}
+			options.each(function() {
+				if ($(this).val() > max) $(this).addClass('hidden-form');
+				else $(this).removeClass('hidden-form');
+			});
+			if (options.parent().val() > max) {
+				options.parent().val(options.first());
+				$(susDur).val(options.parent().val());
+			}
+			$(susFreq).val($(that).val());
+			updateTotalGiftAmt();
+		} else {
+			console.log('Error finding frequency change!');
+		}
+	};
+	
+	window.sustainingDurationChange = function(that) {
+		var susDur = document.getElementById('sustaining.duration');
+		if ($(that).length > 0 && susDur) {
+			$(susDur).val($(that).val());
+			updateTotalGiftAmt();
+		} else {
+			console.log('Error finding sustaining duration change!');
+		}
+	};
+	
+	window.updateTotalGiftAmt = function() {
+		var currDonLevel = $('input[name="level_id"]:checked');
+		var currDonAmt = 0, totalAmt = 0;
+		var susFreq = document.getElementById('sustaining.frequency');
+		var susDur = document.getElementById('sustaining.duration');
+		var totalAmtText = document.getElementById('totalAmt');
+		if (currDonLevel && currDonLevel.length > 0 && susFreq && susDur && totalAmtText) {
+			if (currDonLevel.is('#level_other')) {
+				if ($('#other_amount').val().length > 0) currDonAmt = parseFloat($('#other_amount').val().replace(/[,$]/g, ''));
+				else currDonAmt = 0;
+				if (currDonAmt < 5) { $('#donate-continue').hide(); $('.minerror').remove(); $('#otherRadio').after('<span class="minerror" style="color:red;">Minimum donation: $5.00</span>');}
+				else { $('#donate-continue').show(); $('.minerror').remove(); }
+			} else currDonAmt = parseInt(currDonLevel.attr('amt'));
+			if ($(susFreq).val().length == 0) {
+				// one-time gift
+				totalAmtText.innerHTML = '$' + currDonAmt.toFixed(2);
+			} else if ($(susDur).val() == 0) {
+				// forever gift
+				if ($(susFreq).val() == 'monthly') totalAmt = currDonAmt * 12;
+				else if ($(susFreq).val() == 'quarterly') totalAmt = currDonAmt * 4;
+				else totalAmt = currDonAmt;
+				totalAmtText.innerHTML = '$' + totalAmt.toFixed(2) + ' per year';
+			} else {
+				// finite duration sustaining gift
+				totalAmt = currDonAmt * $(susDur).val();
+				totalAmtText.innerHTML = '$' + totalAmt.toFixed(2);
+			}
+		} else {
+			totalAmtText.innerHTML = '$0';
+		}
+	};
+
+  });
+
+})(jQuery);
+</script>
+
+<script>
+/* Adding some API form specific stuff here - jgb, 4/17/14 */
+(function($) {
+	$(document).ready(function() {
+		if (window.gwUtilities) {
+			if (gwUtilities.queryString.get('student_org')) {
+				assignStudentOrg();
+			}
+		}
+$('body').addClass('making-history').removeClass('logo-full');
+	});
+	
+	function assignStudentOrg() {
+		if (!$('#designeeText_1006').length) {
+			setTimeout(function() {
+				assignStudentOrg();
+			}, 300);
+			return;
+		}
+		var studentOrg = gwUtilities.queryString.get('student_org');
+		$('#designationType_1006').prop('checked', true);
+		$('#designeeText_1006').val(studentOrg);
+	}
+}) (jQuery);
+</script>
+]]
