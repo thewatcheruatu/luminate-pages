@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+	<title>KACIF Challenge</title>
+	<link rel='stylesheet' href='../css/gwu_wrpr/gw-default.css'>
+	<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+	<script src='../js/gwu_wrpr/gw-utilities.js'></script>
+	<script src='../js/gwu_wrpr/gw-progress-meters.js'></script>
+</head>
+
+<body>
+	<main>
+<h1>KACIF Challenge</h1>
+
+<section id='kacif-challenge-description-and-progress'>
+	<section id='kacif-challenge-description'>
+		<h3>About the Challenge</h3>
+		<p><strong>If 250 individuals make a gift to any area of GW by June 15, they will unlock a $25,000 gift to the Knowledge in Action Career Internship Fund (KACIF).</strong> All donations enhance the GW experience and ensure that students can access every opportunity.</p>
+
+		<p>Each year, hundreds of students take advantage of real-world education and training through internships, but the financial burden can be challenging. KACIF provides a stipend so that students can accept a once-in-a-lifetime unpaid internship and launch their future careers.</p>
+	</section>
+
+	<section id='kacif-challenge-progress'>
+		<h3>Number of Alumni Donors</h3>
+		<div id='kacif-challenge-progress-meter'></div>
+		<div id='kacif-challenge-progress-readout'></div>
+	</section>
+</section>
+
+<div id='give-button-container'>
+	<a href='' class='faux-button primary full-width'>Give Now</a>
+</div>
+
+<section id='kacif-challenge-testimonial'>
+	<section id='kevin-smith' class='testimonial hidden'>
+		<div class='testimonial-text'>
+			<p>During my summer internship with Engineering World Health, I worked in various healthcare settings in Nicaragua to repair damaged medical equipment and identify clinical needs. As one aspect of our job in the Chontales region, we reviewed 75 medical devices including nebulizers, IV pumps, syringe pumps, centrifuges, autoclaves, rotator machines, and more. I observed and experienced so much that will absolutely help me with my career in biomedical engineering and global development. I owe a huge thank you to Engineering World Health, GW Career Services, and my KACIF funders.</p>
+
+			<p class='testimonial-attribution'>Kevin Smith, BA '18</p>
+		</div>
+		<figure class='testimonial-image'>
+			<img src='https://secure2.convio.net/gwu/images/donation_forms/kacif/kevin-smith.jpg'>
+		</figure>
+
+	</section>
+
+	<section id='ashley-le' class='testimonial hidden'>
+		<div class='testimonial-text'>
+			<p>In the summer of 2017, I had the best honor of my life to join a team of world-changers at the United Nations Refugee Agency (UNHCR) regional office in D.C. I was part of the Public Information team, the primary unit responsible for all communications effort between the UNHCR and US media outlets, and on World Refugee Day (June 20), I found myself directly involved in organizing the UNHCR's annual celebration event at the Kennedy Center. The internship at UNHCR has not only led me to discover the intersection of my passion and the need of the world, but it also provided me with further opportunities for professional development. In the Fall 2017 semester, I embarked on my study abroad journey in Jerusalem, while also continuing my service at the United Nations at UNRWA, the United Nations Relief and Works Agency for Palestinian refugees.</p>
+
+			<p class='testimonial-attribution'>Ashley Le, BA '19</p>
+		</div>
+		<figure class='testimonial-image'>
+			<img src='https://secure2.convio.net/gwu/images/donation_forms/kacif/ashley-le.jpg'>
+		</figure>
+	</section>
+
+	<section id='cody-etlin' class='testimonial hidden'>
+		<div class='testimonial-text'>
+			<p>At the Organization of American States (OAS), I served as an intern for the Secretariat for Strengthening Democracy, working for the chief political advisor on legislative affairs. I left the OAS with the professional confidence and cultural adaptability to communicate effectively and respectfully with colleagues of different linguistic, religious and socioeconomic backgrounds. Thanks in large part to my experience at the OAS, I was recently selected as a Charles B. Rangel Fellow, where I will have the honor to serve the United States as a Foreign Service Officer. With utmost gratefulness, I thank the KACIF program and donors for empowering me to reach new professional heights.</p>
+
+			<p class='testimonial-attribution'>Cody Etlin, BA '18</p>
+		</div>
+		<figure class='testimonial-image'>
+			<img src='https://secure2.convio.net/gwu/images/donation_forms/kacif/cody-etlin.jpg'>
+		</figure>
+	</section>
+
+	<section id='kaitlyn-buffaloe' class='testimonial hidden'>
+		<div class='testimonial-text'>
+			<p>As an intern for the Office of the Attorney General, I work under an Assistant Attorney that primarily deals with felony crimes. My internship taught me more over the course of a few weeks than a class can in a semester due to the first-hand experiences I have received. I am extremely grateful for this opportunity and for the other resources that GW provides to students, such as resume assistance, career planning, and job searching platforms.</p>
+
+			<p class='testimonial-attribution'>Kaitlyn Buffaloe, BA '20</p>
+		</div>
+		<figure class='testimonial-image'>
+			<img src='https://secure2.convio.net/gwu/images/donation_forms/kacif/kaitlyn-buffaloe.jpg'>
+		</figure>
+	</section>
+</section>
+
+<style class='custom-styles'>
+	.testimonial-image {
+		margin : 0;
+	}
+
+	.testimonial-image img {
+		border : .2em solid #034967;
+		height : auto;
+		width : 100%;
+	}
+
+	.testimonial-attribution {
+		color : #ffd86a;
+		font-style : italic;
+		text-align : right;
+	}
+
+	#give-button-container {
+		margin : 2em 0;
+		text-align : center;
+	}
+
+	#kacif-challenge-progress-meter, #kacif-challenge-progress-readout {
+		margin-bottom : 2em;
+	}
+
+	#kacif-challenge-testimonial {
+		background-color : #0096D6;
+		border : .2em solid #0476a7;
+		border-left : 0;
+		border-right : 0;
+		color : #f5efef;
+		font-size : 1.2em;
+		padding : 1.5em;
+	}
+
+	#kacif-challenge-description h3,
+	#kacif-challenge-progress h3 {
+		border : 0;
+		padding-top : 0;
+	}
+
+@media only screen and ( min-width : 50em ) {
+	#kacif-challenge-description-and-progress {
+		display : flex;
+		justify-content : space-between;
+	}
+
+	#kacif-challenge-description, #kacif-challenge-progress {
+		width : 48%;
+	}
+}
+
+@media only screen and ( min-width : 60em ) {
+	.testimonial {
+		display : flex;
+		justify-content : space-between;
+	}
+
+	.testimonial-image {
+		width : 40%;
+	}
+
+	.testimonial-image img {
+		box-shadow : 0.33em 0.33em 0.5em #01618a;
+	}
+
+	.testimonial-text {
+		width : 55%;
+	}
+}
+</style>
+
+<script>
+'use strict';
+( function( $ ) {
+	// On document ready
+	$( function() {
+		var $testimonials = $( '.testimonial' );
+		var randomIndex = Math.floor( Math.random() * $testimonials.length );
+		$( $testimonials.get( randomIndex ) )
+			.removeClass( 'hidden' );
+
+		GWUtilities.loadClass( 'GWProgressMeters' )
+			.then( function() {
+				loadProgress();
+			} )
+			.catch( function( _error ) {
+				console.log( _error );
+			} );
+
+		function loadProgress() {
+			var kacifData = {
+				goal : 250,
+				current : 0
+			};
+
+			var gwProgressMeters = new GWProgressMeters( {
+				jQuery : $,
+				GWUtilities : GWUtilities,
+			} );
+
+			var kacifMeter = new gwProgressMeters.ProgressMeter( 
+				'#kacif-challenge-progress-meter', 
+				{ 
+					delayFill: 500,
+				}
+			);
+
+			var kacifReadout = new gwProgressMeters.ProgressReadout(
+				'#kacif-challenge-progress-readout',
+				{
+					goalType : 'donors',
+				}
+			);
+
+			kacifMeter.init( kacifData );
+			kacifReadout.init( kacifData );
+		}
+	} );
+} )( jQuery );
+</script>
+
+	</main>
+</body>
+</html>
