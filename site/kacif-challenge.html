@@ -14,26 +14,29 @@
 
 <body>
 	<main>
-<h1>KACIF Challenge</h1>
+CIF Challenge</h1>
 
 <section id='kacif-challenge-description-and-progress'>
 	<section id='kacif-challenge-description'>
-		<h3>About the Challenge</h3>
-		<p><strong>If 250 individuals make a gift to any area of GW by June 15, they will unlock a $25,000 gift to the Knowledge in Action Career Internship Fund (KACIF).</strong> All donations enhance the GW experience and ensure that students can access every opportunity.</p>
+		<p>Grants provided through the Knowledge in Action Career Internship Fund (KACIF) enable students to accept that once-in-a-lifetime internship, instead of having to work a part-time job for financial reasons.</p>
 
-		<p>Each year, hundreds of students take advantage of real-world education and training through internships, but the financial burden can be challenging. KACIF provides a stipend so that students can accept a once-in-a-lifetime unpaid internship and launch their future careers.</p>
+		<p><strong>If 500 <em>more</em> donors (1,000 total) make a gift to any area that supports GW students by June 30, they will unlock an ADDITIONAL $50,000 gift to KACIF ($100,000 total). This will allow 60 additional students to take on high-quality, necessarily unpaid internships.</strong></p>
+
+		<p>Make your gift today to enable real-world opportunities for students. Your support every year opens doors every day.</p>
 	</section>
 
 	<section id='kacif-challenge-progress'>
-		<h3>Number of Alumni Donors</h3>
+		<h3 style='margin-bottom : .5em;'>Number of Donors</h3>
+		<div style='color : #ffc82e; border-width : .1em 0; border-style: solid; font-size : 1.25em; margin-bottom : .25em; padding : .2em .5em; text-align : center;'>500 donor milestone surpassed!</div>
 		<div id='kacif-challenge-progress-meter'></div>
 		<div id='kacif-challenge-progress-readout'></div>
 	</section>
+
+	<section id='give-button-container'>
+		<a href='Donation2?df_id=3501&3501.donation=form1' class='faux-button primary full-width-mobile'>Give Now</a>
+	</section>
 </section>
 
-<div id='give-button-container'>
-	<a href='' class='faux-button primary full-width'>Give Now</a>
-</div>
 
 <section id='kacif-challenge-testimonial'>
 	<section id='kevin-smith' class='testimonial hidden'>
@@ -83,6 +86,12 @@
 </section>
 
 <style class='custom-styles'>
+	.testimonial {
+		display : flex;
+		justify-content : space-between;
+		flex-wrap : wrap;
+	}
+
 	.testimonial-image {
 		margin : 0;
 	}
@@ -102,6 +111,7 @@
 	#give-button-container {
 		margin : 2em 0;
 		text-align : center;
+		width : 100%;
 	}
 
 	#kacif-challenge-progress-meter, #kacif-challenge-progress-readout {
@@ -111,11 +121,19 @@
 	#kacif-challenge-testimonial {
 		background-color : #0096D6;
 		border : .2em solid #0476a7;
-		border-left : 0;
-		border-right : 0;
 		color : #f5efef;
 		font-size : 1.2em;
 		padding : 1.5em;
+	}
+
+	#kacif-challenge-description-and-progress {
+		display : flex;
+		justify-content : space-between;
+		flex-wrap : wrap;
+	}
+
+	#kacif-challenge-description, #kacif-challenge-progress {
+		width : 100%;
 	}
 
 	#kacif-challenge-description h3,
@@ -124,21 +142,25 @@
 		padding-top : 0;
 	}
 
-@media only screen and ( min-width : 50em ) {
-	#kacif-challenge-description-and-progress {
-		display : flex;
-		justify-content : space-between;
+@media only screen and ( max-width : 49.9em ) {
+	#give-button-container {
+		order : 1;
 	}
+
+	#kacif-challenge-progress {
+		order : 2;
+	}
+
+	.testimonial-text {
+		order : 1;
+	}
+
+}
+
+@media only screen and ( min-width : 50em ) {
 
 	#kacif-challenge-description, #kacif-challenge-progress {
 		width : 48%;
-	}
-}
-
-@media only screen and ( min-width : 60em ) {
-	.testimonial {
-		display : flex;
-		justify-content : space-between;
 	}
 
 	.testimonial-image {
@@ -161,9 +183,13 @@
 	// On document ready
 	$( function() {
 		var $testimonials = $( '.testimonial' );
-		var randomIndex = Math.floor( Math.random() * $testimonials.length );
-		$( $testimonials.get( randomIndex ) )
-			.removeClass( 'hidden' );
+		var requestedTestimonial = GWUtilities.queryString.get( 'testimonial' );
+		if ( requestedTestimonial && $( '#' + requestedTestimonial.length ) ) {
+			$( '#' + requestedTestimonial ).removeClass( 'hidden' );
+		} else {
+			var randomIndex = Math.floor( Math.random() * $testimonials.length );
+			$( $testimonials.get( randomIndex ) ).removeClass( 'hidden' );
+		}
 
 		GWUtilities.loadClass( 'GWProgressMeters' )
 			.then( function() {
@@ -175,8 +201,8 @@
 
 		function loadProgress() {
 			var kacifData = {
-				goal : 250,
-				current : 0
+				goal : 1000,
+				current : 972
 			};
 
 			var gwProgressMeters = new GWProgressMeters( {
@@ -187,9 +213,13 @@
 			var kacifMeter = new gwProgressMeters.ProgressMeter( 
 				'#kacif-challenge-progress-meter', 
 				{ 
-					delayFill: 500,
+					delayFill: 1000,
 				}
 			);
+
+			kacifMeter.addMilestoneMarker( {
+				amount : 500
+			} );
 
 			var kacifReadout = new gwProgressMeters.ProgressReadout(
 				'#kacif-challenge-progress-readout',
@@ -204,6 +234,10 @@
 	} );
 } )( jQuery );
 </script>
+
+<style>
+nav {display:none;}
+</style>
 
 	</main>
 </body>
