@@ -1,0 +1,230 @@
+<!doctype html> <html> <head>
+	<title>[Page Title Goes Here]</title>
+	<link rel='stylesheet' href='../css/gwu_wrpr/gw-default.css'>
+	<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+	<script src='../js/gwu_wrpr/gw-utilities.js'></script>
+</head>
+
+<body>
+	<main>
+<h1>We Choose to Lead</h1>
+
+<section id='q1-appeal-description-and-video'>
+	<section id='q1-appeal-description'>
+		<div id='q1-appeal-description-container'>
+			<p>Students, faculty, staff, families, and alumni choose to be a part of GW for the unique opportunities our location affords, the hands-on learning and research that takes place here, and for the difference we can make in the lives of others.</p>
+			
+			<p>Please help us open doors for students who would not otherwise be able to attend GW by making your gift today.</p>
+		</div>
+
+		<section id='designees-list-section' class='hidden'>
+			<select id='designee-type-select'>
+				<option>Select an Area to Support</option>
+				<option value='1001'>Power &amp; Promise Fund for Student Aid</option>
+				<option value='1002'>Schools and Colleges</option>
+				<option value='1003'>Other Priorities</option>
+			</select>
+		</section>
+
+	</section>
+
+	<section id='q1-appeal-video-section'>
+		<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/292385766" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+	</section>
+
+	<section id='give-button-container'>
+		<a href='Donation2?df_id=3541&3541.donation=form1' id='give-now-button' class='faux-button primary full-width-mobile'>Give Now</a>
+	</section>
+</section>
+
+
+
+<style class='custom-styles'>
+	a.designee-list-link {
+		border : .1em solid;
+		color : #fff;
+		display : block;
+		margin : .2em 0;
+		padding : .5em .75em;
+	}
+
+	a.designee-list-link:link,
+	a.designee-list-link:visited {
+		background-color : #0096d6;
+		border-color : #106082;
+		text-decoration : none;
+	}
+
+	a.designee-list-link:hover,
+	a.designee-list-link:active {
+		background-color : #7ac143;
+		border-color : #456d26;
+	}
+
+	#give-button-container {
+		margin : 2em 0;
+		text-align : center;
+		width : 100%;
+	}
+
+	#q1-appeal-description-and-video {
+		display : flex;
+		justify-content : space-between;
+		flex-wrap : wrap;
+	}
+
+	#q1-appeal-description, #q1-appeal-video-section {
+		margin-bottom : 2em;
+		width : 100%;
+	}
+
+	#q1-appeal-description h3,
+	#q1-appeal-video-section h3 {
+		border : 0;
+		padding-top : 0;
+	}
+
+@media only screen and ( max-width : 59.9em ) {
+	#give-button-container {
+		order : -1;
+	}
+
+	#q1-appeal-video-section {
+		order : -2;
+	}
+}
+
+@media only screen and ( min-width : 60em ) {
+
+	#q1-appeal-description, #q1-appeal-video-section {
+		width : 48%;
+	}
+}
+</style>
+
+<script src='../js/luminateExtend.js'></script>
+<script src='../js/gwu_wrpr/gw-form-designees.min.js'></script>
+<script>
+( function( $ ) {
+	$( function() {
+		var variant = GWUtilities.queryString.get( 'variant' );
+		if ( ! variant ) {
+			return;
+		} else {
+			variant = variant.toLowerCase();
+		}
+		if ( variant === 'c' ) {
+			$( '#give-now-button' )
+				.attr( 
+					'href', 
+					'Donation2?df_id=3541&3541.donation=form1&set.SingleDesignee=1070' 
+				);
+		} else if ( variant === 'd' ) {
+			$( '#give-now-button' )
+				.attr( 
+					'href', 
+					'Donation2?df_id=3541&3541.donation=form1&set.SingleDesignee=1066' 
+				);
+		}
+		if ( variant !== 'b' ) {
+			return;
+		}
+		var apiConfig = {
+			apiKey : '[[S0:CONVIO_API_KEY]]',
+			path : {
+				nonsecure : 'http://[[S29:DOMAIN]][[S29:PATH]]',
+				secure : 'https://[[S29:SECURE_DOMAIN]][[S29:SECURE_PATH]]'
+			},
+		};
+
+		var donationFormId = '3541';
+		GWFormDesignees.init( 
+			{ luminateExtend : luminateExtend }, 
+			{ apiConfig : apiConfig, donationFormId : donationFormId },
+		);
+		
+		var designees;
+		GWFormDesignees.getDesignees()
+			.then( function( _designees ) {
+				designees = _designees;
+				return GWFormDesignees.getDesignationTypes();
+			} )
+			.then ( function( _designationTypes ) {
+				if ( ! designees ) {
+					return;
+				}
+				var $designeesSection = $( '#designees-list-section' );
+				_designationTypes.forEach( function( _designationType ) {
+					var designeesHtml = [];
+					designees.forEach( function( _designee ) {
+						if ( _designationType.id !== _designee.typeId ) {
+							return;
+						}
+
+						// Other designation
+						if ( _designee.id === '3021' ) {
+							return;
+						}
+						designeesHtml.push(
+							'<li class="designee-list-item">' +
+							'<a href="Donation2?df_id=3541&3541.donation=form1' +
+							'&set.SingleDesignee=' + _designee.id + '" ' +
+							'class="designee-list-link">' +
+							_designee.name + '</a></li>'
+						);
+					} );
+
+					var designeesListHtml = 
+						'<section id="designee-type-' + _designationType.id + '" ' +
+						'class="designee-type-section hidden">' +
+						'<h3>' + _designationType.name + '</h3>' +
+						'<ul class="designees-list unstyled">\n' +
+						designeesHtml.join( '\n' ) +
+						'</ul></section>'
+
+					$designeesSection.append( designeesListHtml );
+				} );
+				$designeesSection.append(
+					'<p style="font-size : 1.25em;"><strong>' +
+					'Not seeing the area you want to support? ' +
+					'<a href="Donation2?df_id=3541&3541.donation=form1' +
+					'&set.SingleDesignee=3021">' +
+					'Enter one in the comments.</a><strong></p>'
+				);
+
+
+				var $designeeTypeSelect = $( '#designee-type-select' );
+				$designeeTypeSelect
+					.on( 'change', function( e ) {
+						if ( $designeeTypeSelect.val().length !== 4 ) {
+							$( '.designee-type-section' ).addClass( 'hidden' );
+						}
+						$( '#designee-type-' + $designeeTypeSelect.val() )
+							.removeClass( 'hidden' )
+							.siblings( '.designee-type-section' )
+							.addClass( 'hidden' );
+					} );
+
+				$( '#give-now-button' )
+					.on( 'click', function( e ) {
+						e.preventDefault();
+						$( '#designees-list-section' ).removeClass( 'hidden' );
+						$( '#give-button-container' ).addClass( 'hidden' );
+						$( '#q1-appeal-description-container' ).addClass( 'hidden' );
+					} );
+			} )
+			.catch( function( _error ) {
+				console.log( 'error', _error )
+			} );
+	} );
+
+} )( jQuery );
+</script>
+
+	</main>
+</body>
+</html>
