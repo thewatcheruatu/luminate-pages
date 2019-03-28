@@ -1,0 +1,316 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title>Buff and Blue Challenge</title>
+		<link href='../css/gwu_wrpr/gw-default.css' type='text/css' rel='stylesheet'>
+		<script
+			src="https://code.jquery.com/jquery-3.3.1.min.js"
+			integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			crossorigin="anonymous"></script>
+		<script src='../js/gwu_wrpr/gw-default.js'></script>
+	</head>
+
+	<body>
+<header id='buff-and-blue-challenge-header'>
+	<h1>The Buff &amp; Blue Fund Challenge</h1>
+</header>
+
+<section id='buff-and-blue-challenge'>
+
+	<section id='copy-leaders-and-form'>
+		<section id='copy-leaders'>
+			<p>Copy text goes here.</p>
+			<p style='text-align : center;' class='hidden'><a class='faux-button primary full-width' href='Donation2?df_id=3661&3661.donation=form1'>Give Now</a></p>
+
+			<section id='division-leaders'>
+				<section id='buff-division-leaders' class='division-leaders-section'>
+					<h2 id='buff-division-leaders-heading' class='division-leaders-heading'>Buff Division Leaders</h2>
+					<ul class='division-leaders-list'>
+						<li class='division-leader buff-division-leader improved-leader'>
+							<img class='division-leader-icon' src='https://secure2.convio.net/gwu/images/donation_forms/bbf/team-icons/womens-rowing.png'>
+							<div class='division-leader-rank-and-name'>
+								<h3 class='division-leader-rank'>Most Improved</h3>
+								<p>Women's Rowing</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+
+			<section id='team-standings' class='hidden'>
+				<div id='team-buff' class='team'>
+					<h2>Buff Division Leaders</h2>
+					<div id='team-buff-leaders'>
+						<div class='team-leader improved-leader'>
+							<img class='team-leader-icon' src='https://secure2.convio.net/gwu/images/donation_forms/bbf/team-icons/womens-rowing.png'>Women's Rowing - Improved
+						</div>
+					</div>
+					<h3>Standings</h3>
+				</div>
+				<div id='team-blue' class='team'>
+					<h2>Blue Division</h2>
+					<h3>Leaders</h3>
+					<div id='team-blue-leaders'>
+						<div class='team-leader improved-leader'>
+							<img class='team-leader-icon' src='../images/donation_forms/bbf/team-icons/sailing.png'>Sailing - Improved
+						</div>
+					</div>
+					
+					<h3>Standings</h3>
+				</div>
+			</section><!-- End #team-standings (section) -->
+
+			<section id='social-sharing'>
+				<p>Social sharing goes here.</p>
+			</section>
+
+		</section><!-- End #copy-leaders (section) -->
+
+		<section id='bbfc-form'>
+			<div style='border : .1em solid #efefef; height : 20em;'>
+			<p>Form goes here.</p>
+			</div>
+		</section>
+	</section><!-- End #copy-leaders-and-form -->
+
+
+	<p class='footnote'><em>Standings last updated 3/01/2018.</em></p>
+
+</section><!-- End of #buff-and-blue-challenge (section) -->
+
+<style class='custom-style'>
+#copy-leaders-and-form {
+	display : flex;
+	flex-wrap : wrap;
+	justify-content : space-between;
+}
+
+#copy-leaders, #bbfc-form {
+	width : 48%;
+}
+
+#division-leaders {
+	display : flex;
+	flex-wrap : wrap;
+	justify-content : space-between;
+}
+
+.division-leaders-section {
+	width : 49%;
+}
+
+.division-leaders-heading {
+	border : 0;
+	color : #fff;
+	margin : 0 0 .5em;;
+	padding : .5em 1em;
+	text-align : center;
+	text-transform : uppercase;
+}
+
+#buff-division-leaders-heading {
+	background-color : #908065;
+}
+
+
+/*
+.bbf-progress-meter {
+	background-color : #3b3c3a;
+	border : .2em solid #01648e;
+	color : #fff;
+	margin : .2em 0;
+	position: relative;
+	display : none;
+}
+
+.bbf-progress-meter-label {
+	line-height : 2em;
+	padding-right : .5em;
+	position : absolute;
+	text-align : right;
+	width : 100%;
+}
+
+.bbf-progress-meter-fill {
+	background-color : #0096d6;
+	height : 2em;
+	transition : width .5s ease-in-out;
+	width : 0%;
+}
+
+.team {
+	margin : 1.5em 0;
+}
+
+.team-leader {
+	color : #666;
+	font-size : 1.3em;
+	font-weight : bold;
+	margin : .3em 0;
+	text-transform : uppercase;
+}
+
+.team-leader-icon {
+	height : 3.5em;
+	vertical-align : middle;
+	margin-right : 1.3em;
+	width : auto;
+}
+
+@media only screen and ( min-width : 50em ) {
+	.team {
+		flex-basis : 49%;
+	}
+
+	#team-standings {
+		display : flex;
+		justify-content : space-between;
+	}
+}
+*/
+</style>
+
+<script>
+'use strict';
+
+var BuffBlueChallenge = ( function() {
+	var $;
+
+	var teamBuff = [
+		{ name : 'Baseball', donated : 106, total : 395 },
+		{ name : "Men's Basketball", donated : 27, total : 214 },
+		{ name : "Women's Basketball", donated : 17, total : 143 },
+		{ name : "Golf", donated : 20, total : 145 },
+		{ name : "Men's Rowing", donated : 110, total : 495 },
+		{ name : "Women's Rowing", donated : 126.5, total : 406 },
+		{ name : "Men's Soccer", donated : 47, total : 217 },
+		{ name : "Women's Soccer", donated : 59, total : 218 },
+		{ name : "Men's Swimming/Diving", donated : 17, total : 148 },
+		{ name : "Women's Swimming/Diving", donated : 21, total : 180 },
+		{ name : "Men's Tennis", donated : 21, total : 154 },
+		{ name : "Volleyball", donated : 8, total : 142 },
+	];
+
+	var teamBlue = [
+		{ name : "Men's Cross Country/Track", donated : 14, total : 88 },
+		{ name : "Women's Cross Country/Track", donated : 6, total : 82 },
+		{ name : "Gymnastics", donated : 94, total : 123 },
+		{ name : "Lacrosse", donated : 34, total : 107 },
+		{ name : "Sailing", donated : 23, total : 52 },
+		{ name : "Softball", donated : 5, total : 67 },
+		{ name : "Men's Squash", donated : 12, total : 61 },
+		{ name : "Women's Squash", donated : 7, total : 49 },
+		{ name : "Women's Tennis", donated : 11, total : 132 },
+		{ name : "Men's Water Polo", donated : 118.5, total : 135 },
+		{ name : "Women's Water Polo", donated : 10, total : 74 },
+	];
+
+	function init( dependencies ) {
+		dependencies = dependencies || {};
+		$ = dependencies.jQuery || jQuery;
+
+		teamBuff = sortTeamArray( calculatePercentages( teamBuff ) );
+		teamBlue = sortTeamArray( calculatePercentages( teamBlue ) );
+
+		var $teamBuff = $( '#team-buff' );
+		var $teamBuffLeaders = $( '#team-buff-leaders' );
+		var $teamBlue = $( '#team-blue' );
+		var $teamBlueLeaders = $( '#team-blue-leaders' );
+
+		teamBuff.map( function( team, i ) {
+			if ( i < 2 ) {
+				$teamBuffLeaders
+					.children( '.improved-leader' )
+					.before( makeLeader( team, i ) );
+			}
+			$teamBuff.append( makeProgressMeter( team ) );
+		} );
+
+		teamBlue.map( function( team, i ) {
+			if ( i < 2 ) {
+				$teamBlueLeaders
+					.children( '.improved-leader' )
+					.before( makeLeader( team, i ) );
+			}
+			$teamBlue.append( makeProgressMeter( team ) );
+		} );
+
+		function calculatePercentages( teamArray ) {
+			for ( var i = 0; i < teamArray.length; i++ ) {
+				teamArray[i].percent = teamArray[i].donated / teamArray[i].total;
+			}
+
+			return teamArray;
+		}
+
+		function makeLeader( team, position ) {
+			var iconUrl = 'https://secure2.convio.net/gwu/images/donation_forms/bbf/team-icons/' + 
+				hyphenate( team.name ) + '.png';
+			var html = '<div class="team-leader">' +
+				'<img class="team-leader-icon" src="' + iconUrl + '">' +
+				team.name + ' - ' +
+				( position === 0 ? '1st' : '' ) +
+				( position === 1 ? '2nd' : '' ) +
+				( position === 2 ? '3rd' : '' ) +
+				'</div>';
+
+			return html;
+		}
+
+		function makeProgressMeter( team ) {
+			var teamHyphenated = hyphenate( team.name );
+			var fillPercentString = Math.floor( team.percent * 100 ) + '%';
+			var html = '<div class="bbf-progress-meter" ' +
+				'id="' + teamHyphenated + '">' +
+				'<div class="bbf-progress-meter-label">' + team.name + 
+				' | ' + fillPercentString + '</div>' +
+				'<div class="bbf-progress-meter-fill"></div>' +
+				'</div>';
+
+			setTimeout( function() {
+				$( '#' + teamHyphenated )
+					.children( '.bbf-progress-meter-fill' )
+					.css( 'width', ( team.percent * 100 ) + '%' );
+			}, 500 );
+
+			return html;
+
+		}
+
+		function sortTeamArray( teamArray ) {
+			teamArray.sort( function( a, b ) {
+				if ( a.percent < b.percent ) {
+					return 1;
+				}
+				if ( a.percent > b.percent ) {
+					return -1;
+				}
+				return 0;
+			} );
+			
+			return teamArray;
+		}
+	}
+
+	function hyphenate( s ) {
+		return s
+			.toLowerCase()
+			.trim()
+			.replace( /[']/g, '' )
+			.replace( /[ ]+/g, '-' )
+			.replace( /[\/]+/g, '-and-' );
+	}
+
+	return {
+		init : init,
+	}
+} )();
+
+//( function( $ ) {
+	BuffBlueChallenge.init( { jQuery : jQuery } );
+//} )( jQuery );
+
+</script>
+
+	</body>
+</html>
