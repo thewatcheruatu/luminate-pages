@@ -1,0 +1,428 @@
+<h1>GW School of Public Health Students Show Their Love</h1>
+<input type='hidden' id='optional-repeat' value='false'>
+<input type='hidden' id='donation-level-yearly' value='4350'>
+<input type='hidden' id='donation-level-one-time' value='4343'>
+<input type='hidden' id='single-designee' value='1073'>
+<input type='hidden' id='flexible-duration' value='Y:5'>
+
+<div id='choose-your-gift-type' class='user-interaction-slider'>
+	<div class='slide'>
+	<div style="padding-right: 1.5em;"><img src="../images/donation_forms/i-heart-gwsph/i-heart-gwsph-logo-600x400.png" style="width: 100%; height: auto;"></div>
+		<div id='june-promotion-container' class='clearfix'>
+			<div id='june-promotion'>
+				<p><strong>Students today pledging to support the students of tomorrow.</strong></p>
+				<p>Make your pledge by February 21 to the Capital Connection Fund to show your support for future public health leaders, like you. Give at least $50 in a pledge or one-time gift to any GWSPH fund or department and receive a "I Heart GW Public Health" t-shirt!</p>
+				<p><button class='give-button slide-control next-slide' id='make-a-monthly-gift'>Make My Pledge</button></p>
+				
+			</div>
+			<p><button class='give-button gw-blue-background slide-control next-slide' id='make-a-one-time-gift'>Make My One-Time Gift</button></p>
+		</div>
+	</div>
+	
+	<div class='slide'>
+		<h2>My Designee</h2>
+		<ul class="designation-list">
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=4942" data-single-designee='4942'>Students for Students Fund</a></li><li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=1073" data-single-designee='1073'>Milken Institute School of Public Health Power &amp; Promise Student Aid</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=1014" data-single-designee='1014'>Milken Institute School of Public Health</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=1323" data-single-designee='1323'>Capital Connection Fund</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=3962" data-single-designee='3962'>Environmental and Occupational Health</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=4562" data-single-designee='4562'>Epidemiology and Biostatistics</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=3964" data-single-designee='3964'>Exercise and Nutrition Sciences</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=3965" data-single-designee='3965'>Global Health</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=3966" data-single-designee='3966'>Health Policy and Management</a></li>
+                        <li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=3902" data-single-designee='3902'>Interdisciplinary Student Community-Oriented Prevention Enhancement Services (ISCOPES)</a></li>
+			<li><a href="Donation2?df_id=3161&3161.donation=form1&set.SingleDesignee=3967" data-single-designee='3967'>Prevention and Community Health</a></li>
+		</ul>
+		
+		<p><button class='slide-control previous-slide give-button gw-light-gray-background reverse-button'>Back</button></p>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+'use strict';
+
+( function( $, undefined ) {
+	
+	//gwuForm.settings.useMockSelectionLists = false;
+	$(document).ready(function() {
+		
+		var thisPage = {};
+		thisPage.init = function() {
+			attachEventHandlers();
+		}
+		
+		var UserInteractionSliders = {};
+		
+		UserInteractionSliders.adjustLayout = function() {
+			var userInteractionSliders = $( '.user-interaction-slider' );
+			userInteractionSliders.each( function() {
+				var thisSlider = $( this );
+				UserInteractionSliders.Slider.positionSlides( thisSlider );
+			} );
+		};
+		
+		UserInteractionSliders.attachEventHandlers = function() {
+			var userInteractionSliders = $( '.user-interaction-slider' );
+			$( window )
+				.on( 'resize load', function() {
+					UserInteractionSliders.adjustLayout();
+				} );
+			
+			userInteractionSliders
+				.on( 'mouseenter', 'button', function( e ) {
+					userInteractionSliders.children( '.slide' ).css( 'will-change', 'left' );
+				} )
+				.on( 'mouseleave', 'button', function( e ) {
+					userInteractionSliders.children( '.slide' ).css( 'will-change', '' );
+				} )				
+				.on( 'click', 'button', function( e ) {
+					var thisButton = $( this );
+					e.preventDefault();
+					if ( thisButton.hasClass( 'slide-control' ) ) {
+						var thisSlider = thisButton.closest( '.user-interaction-slider' );
+						if ( thisButton.hasClass( 'next-slide' ) ) {
+							UserInteractionSliders.Slider.next( thisSlider );
+						} else if ( thisButton.hasClass( 'previous-slide' ) ) {
+							UserInteractionSliders.Slider.previous( thisSlider );
+						}
+					}
+				} );
+				
+			userInteractionSliders.each( function() {
+				var slider = $( this );
+				$( window ).on( 'hashchange', function() {
+					var correctSlideIndex;
+					var activeSlideIndex = parseInt( slider.data( 'active-slide' ), 10 );
+					if ( ! location.hash ) {
+						correctSlideIndex = 0;
+					} else {
+						correctSlideIndex = parseInt( location.hash.replace( '#slide-', '' ), 10 ) - 1;
+					}
+					if ( correctSlideIndex !== activeSlideIndex ) {
+						UserInteractionSliders.Slider.goToIndex( slider, correctSlideIndex );
+					}
+				} );
+			} );
+		};
+		
+		UserInteractionSliders.detectInnerHeightChanges = function() {
+			var sliders = $( '.user-interaction-slider' );
+			sliders.each( function() {
+				var slider = $( this );
+				var currentHeight = slider.innerHeight();
+				var largestSlideHeight = UserInteractionSliders.Slider.determineLargestSlideHeight( slider );
+				if ( currentHeight !== largestSlideHeight ) {
+					UserInteractionSliders.Slider.setHeight( slider, largestSlideHeight );
+				}
+			} );
+		};		
+		
+		UserInteractionSliders.init = function() {
+			if ( location.hash ) {
+				location.hash = 'slide-1';
+			}
+			var userInteractionSliders = $( '.user-interaction-slider' );
+			UserInteractionSliders.initOrdering( userInteractionSliders );
+			UserInteractionSliders.attachEventHandlers();
+			// There might be a stylesheet or something that gets loaded up after initialization
+			setTimeout( function() {
+				UserInteractionSliders.detectInnerHeightChanges();
+			}, 1000 );
+		};
+		
+		UserInteractionSliders.initOrdering = function( userInteractionSliders ) {
+			userInteractionSliders.each( function() {
+				var thisSlider = $( this );
+				var slides = thisSlider.children();
+				if ( ! slides.length ) {
+					return;
+				}
+				thisSlider.data( 'active-slide', 0 );
+				slides.each( function( slideIndex ) {
+					var thisSlide = $( this );
+					thisSlide
+						.attr( 'id', 'step-' + (slideIndex + 1) )
+						.data( 'slide-index', slideIndex );
+				} );
+			} );
+		};
+		
+		UserInteractionSliders.Slider = {};
+		
+		UserInteractionSliders.Slider.determineLargestSlideHeight = function( slider ) {
+			var largestSlideHeight = 0;
+			var largestSlide;
+			var slides = slider.children( '.slide' );
+			slides.each( function() {
+				var slide = $( this );
+				var slideHeight = slide.height();
+				if ( slideHeight > largestSlideHeight ) {
+					largestSlideHeight = slideHeight;
+					largestSlide = slide;
+				}
+			} );
+			return Math.ceil( largestSlideHeight );
+		};
+		
+		UserInteractionSliders.Slider.scrollPageToSlideTop = function( slider ) {
+			var sliderOffset = slider.offset();
+			//$( 'html, body' ).scrollTop( sliderOffset.top );
+		};
+		
+		UserInteractionSliders.Slider.goToIndex = function( slider, index ) {
+			var activeSlideIndex = slider.data( 'active-slide' );
+			if ( ! UserInteractionSliders.Slider.slideExistsAtIndex( slider, index ) ) {
+				return;
+			}
+			slider.data( 'active-slide', index );
+			UserInteractionSliders.Slider.positionSlides( slider );
+			UserInteractionSliders.Slider.scrollPageToSlideTop( slider );
+			var url = location.href;
+			location.hash = 'slide-' + (index + 1);
+		};
+		
+		UserInteractionSliders.Slider.next = function( slider ) {
+			var activeSlideIndex = slider.data( 'active-slide' );
+			var nextSlideIndex = activeSlideIndex + 1;
+			UserInteractionSliders.Slider.goToIndex( slider, nextSlideIndex );
+		};
+		
+		UserInteractionSliders.Slider.positionSlides = function( slider ) {
+			var containerWidth = slider.innerWidth();
+			var slides = slider.children( '.slide' );
+			var largestSlideHeight = UserInteractionSliders.Slider.determineLargestSlideHeight( slider );
+			var activeSlideIndex = slider.data( 'active-slide' );
+			slides.each( function( slideIndex ) {
+				var thisSlide = $( this );
+				thisSlide.outerWidth( containerWidth );
+				UserInteractionSliders.Slide.setLeft( thisSlide, containerWidth, activeSlideIndex );
+			} );
+			UserInteractionSliders.Slider.setHeight( slider, largestSlideHeight );
+		};
+		
+		UserInteractionSliders.Slider.previous = function( slider ) {
+			var activeSlideIndex = slider.data( 'active-slide' );
+			var previousSlideIndex = activeSlideIndex - 1;
+			UserInteractionSliders.Slider.goToIndex( slider, previousSlideIndex );
+		};
+		
+		UserInteractionSliders.Slider.setHeight = function ( slider, height ) {
+			slider.css( 'min-height', height + 'px' );
+		};
+		
+		UserInteractionSliders.Slider.slideExistsAtIndex = function( slider, index ) {
+			if ( slider.children( '.slide' ).filter( function() {
+				var slide = $( this );
+				if ( slide.data( 'slide-index' ) === index ) {
+					return true;
+				} else {
+					return false;
+				}
+			} ).length ) {
+				return true;
+			} else {
+				return false;
+			}
+		};
+		
+		UserInteractionSliders.Slide = {};
+		
+		UserInteractionSliders.Slide.setLeft = function( slide, containerWidth, activeSlideIndex ) {
+			var thisSlideIndex = slide.data( 'slide-index' );
+			var offset = activeSlideIndex * containerWidth;
+			var thisLeft = thisSlideIndex * containerWidth - offset;
+			slide.css( 'left', thisLeft + 'px' );
+			if ( thisSlideIndex === activeSlideIndex ) {
+				slide.addClass( 'active' );
+			} else {
+				slide.removeClass( 'active' );
+			}
+		};
+		
+		/* Initialize User Interaction Sliders */
+		$( window ).ready( function() {
+			UserInteractionSliders.init();
+			thisPage.init();
+		} );
+	});
+	
+	function attachEventHandlers() {	
+	/*
+		$( '#select-support-area' )
+			.on( 'change', function() {
+				var selectList = $( this );
+				var supportAreaSelection = String( selectList.val() ).replace( /[ ]+/gi, '-' ).toLowerCase();
+				if ( supportAreaSelection === '' ) {
+					$( '#support-area-next-button' ).css( 'display', 'none' );
+					return;
+				}
+				$( '#support-' + supportAreaSelection )
+					.css( 'display', 'block' )
+					.siblings( 'div' ).css( 'display', 'none' );
+				$( '#support-area-next-button' ).trigger( 'click' );
+			} )
+			.trigger( 'change' );
+		*/
+		
+		$( '#make-a-monthly-gift' ).on( 'click', function() {
+			$( '#optional-repeat' ).val( 'true' );
+		} );
+		$( '#make-a-one-time-gift' ).on( 'click', function() {
+			$( '#optional-repeat' ).val( 'false' );
+		} );
+		
+		$( '.designation-list' ).on( 'click', 'a', function( e ) {
+			var donationLevelValue;
+			var donationFormUrl;
+			var flexibleDurationValue;
+			var optionalRepeatValue;
+			var singleDesignee;
+			var singleDesigneeValue;
+			
+			e.preventDefault();
+			singleDesignee = $( '#single-designee' );
+			singleDesignee.val( $( this ).data( 'singleDesignee' ) );
+			optionalRepeatValue = $( '#optional-repeat' ).val();
+			flexibleDurationValue = $( '#flexible-duration' ).val();
+			donationLevelValue = optionalRepeatValue === 'true' 
+			                   ? $( '#donation-level-yearly' ).val() 
+			                   : $( '#donation-level-one-time' ).val();
+			singleDesigneeValue = singleDesignee.val();
+			donationFormUrl = 'Donation2?df_id=3161&3161.donation=form1' 
+			        + '&set.DonationLevel=' + donationLevelValue
+			        + '&set.OptionalRepeat=' + optionalRepeatValue
+					+ ( optionalRepeatValue === 'true' ? '&set.FlexibleDuration=' + encodeURIComponent( flexibleDurationValue ) : '' )
+					+ '&set.SingleDesignee=' + singleDesigneeValue;
+			location = donationFormUrl;
+		})
+		
+	}
+	
+}) ( jQuery );
+</script>
+
+<div class='custom-style'>
+<style>
+	#choose-your-gift-type > div:first-child > div:first-child {
+		display: none;
+	}
+	
+	#june-promotion-container {
+		text-align: right;
+	}
+	
+	#june-promotion {
+		border: .15em solid #7ac143;
+		border-radius: .5em;
+		font-size: 1.3em;
+		margin: 0 auto 1em;
+		max-width: 30em;
+		padding: 1em;
+		text-align: center;
+	}
+	
+	#gw-loyal-water-bottle {
+		float: right;
+		max-width: 1.5em;
+	}
+	
+	#gw-loyal-water-bottle > img {
+		border: 0;
+		height: auto;
+		width: 100%;
+	}
+	
+	#make-a-one-time-gift {
+		font-size: 1em;
+	}
+	
+	.designation-list { list-style-type: none; margin-left: 0; padding-left: 0; }
+	
+	.designation-list li {
+		margin-left: 1.35em;
+		text-indent: -1.35em;
+	}
+	
+	.designation-list li:before {
+		border-top: .35em solid transparent;
+		border-bottom: .35em solid transparent;
+		border-left: .35em solid #666;
+		content: '';
+		display: inline-block;
+		height: 0;
+		margin-right: 1em;
+		width: 0;
+	}
+	
+	@media only screen and ( min-width: 30em ) {
+		#gw-loyal-water-bottle {
+			max-width: 2.5em;
+		}		
+	}
+	
+	@media only screen and ( min-width: 50em ) {
+		#choose-your-gift-type > div:first-child {
+			align-items: flex-start;
+			display: -ms-flexbox;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-wrap: wrap;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+		}
+
+		#choose-your-gift-type > div:first-child > div {
+			-ms-flex: 1 1 50%;
+			-webkit-flex: 1 1 50%;
+			flex: 1 1 50%;
+		}
+		
+		#choose-your-gift-type > div:first-child > div:first-child {
+			display: block;
+			flex-basis: 45%;
+		}
+		#choose-your-gift-type > div:first-child > div:last-child {
+			flex-basis: 55%;
+		}
+		
+		#gw-loyal-water-bottle {
+			max-width: 3.5em;
+		}
+	}
+</style>
+</div>
+
+<div class='custom-style'>
+<style>
+/* User Interaction Sliders */
+.user-interaction-slider {
+	margin: 0 0 1em;
+	overflow: hidden;
+	position: relative;
+}
+.user-interaction-slider > .slide {
+	left: 6000px;
+	padding: 1em;
+	position: absolute;
+	top: 0;
+	transition: left .3s ease-out;
+}
+.user-interaction-slider > .slide:first-child {
+	left: 0;
+}
+
+.user-interaction-slider > .slide.active {
+	position: relative;
+}
+
+</style>
+</div>
+
+
+<script>
+'use strict';
+( function( $ ) {
+	$( 'header .wrapper' ).first().append( '<a href="http://publichealth.gwu.edu/" id="misph-logo-link" style="margin-left: 1em;"><img src="../images/gwu_wrpr/logos/misph-2-color-reverse-400x78.png" alt="Milken Institute School of Public Health" class="logo"></a>' );
+} )( jQuery );
+</script>
